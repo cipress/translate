@@ -3,15 +3,10 @@ package cmd
 import (
   "github.com/spf13/cobra"
   "fmt"
-  "net/http"
-  "io/ioutil"
   "net/url"
-  "strconv"
-  "encoding/json"
   "os"
   "github.com/hankmartinez/translate"
 )
-
 
 var (
   sl, tl string
@@ -25,7 +20,7 @@ func init() {
 var rootCmd = &cobra.Command{
   Use:   "",
   Short: "a simple cli for translation from google.",
-  RunE:   transl}
+  RunE:  transl}
 
 func transl(_ *cobra.Command, args []string) error {
 
