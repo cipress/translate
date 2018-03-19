@@ -1,17 +1,10 @@
-# Table of Contents
-
-- [Installing](#installing)
-- [Commands](#commands)
-
-# installing
+# Installation
 
 Using translate is easy. This command will install the translate executable
 
     go get -u github.com/cipress/translate
 
-# commands
-
-## Example from help
+# Example from help
 
 Multiple args are joined in a single phrase to translate 
 
