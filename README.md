@@ -1,3 +1,5 @@
+[![CircleCI status](https://circleci.com/gh/hankmartinez/translate.png?circle-token=:circle-token "CircleCI status")](https://circleci.com/gh/hankmartinez/translate)
+
 # Installation
 
 Using translate is easy. This command will install the translate executable
