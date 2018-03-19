@@ -25,14 +25,12 @@ var rootCmd = &cobra.Command{
 func transl(_ *cobra.Command, args []string) error {
 
 	if len(args) == 0 {
-		return fmt.Errorf("please provide at least 1 arg to translate")
+		return fmt.Errorf("please provide at least 1 arg to translate\n")
 	}
 	var escapedQuery string
-	var queryLen = 0
 	for _, q := range args {
 		escaped := url.PathEscape(q + " ")
 		escapedQuery += escaped
-		queryLen += len(escaped)
 	}
 	res, err := translate.Translate(sl, tl, escapedQuery)
 	if err != nil {
