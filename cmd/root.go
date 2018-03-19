@@ -25,7 +25,7 @@ func init() {
 var rootCmd = &cobra.Command{
   Use:   "",
   Short: "a simple cli for translation from google.",
-  Run:   translate}
+  RunE:   translate}
 
 func Execute() {
   if err := rootCmd.Execute(); err != nil {
@@ -34,11 +34,10 @@ func Execute() {
   }
 }
 
-func translate(_ *cobra.Command, args []string) {
+func translate(_ *cobra.Command, args []string) error {
 
   if len(args) == 0 {
-    fmt.Printf("please provide at least 1 arg to translate")
-    os.Exit(1)
+    return fmt.Errorf("please provide at least 1 arg to translate")
   }
   var escapedQuery string
   var queryLen = 0
@@ -52,30 +51,26 @@ func translate(_ *cobra.Command, args []string) {
   req.Header.Set("Content-Length", strconv.Itoa(queryLen))
   r, err := http.DefaultClient.Do(req)
   if err != nil {
-    fmt.Printf("could not translate text: %v", err)
-    os.Exit(1)
+    return fmt.Errorf("could not translate text: %v", err)
   }
 
   if r.StatusCode != 200 {
-    fmt.Printf("could read request response code: %v", r.StatusCode)
-    os.Exit(1)
+    return fmt.Errorf("could read request response code: %v", r.StatusCode)
   }
 
   defer r.Body.Close()
   b, err := ioutil.ReadAll(r.Body)
   if err != nil {
-    fmt.Printf("could not read response file: %v", err)
-    os.Exit(1)
+    return fmt.Errorf("could not read response file: %v", err)
   }
   var element []interface{}
   if err := json.Unmarshal(b, &element); err != nil {
-    fmt.Printf("could not unmarshal str %v: %v", string(b), err)
-    os.Exit(1)
+    return fmt.Errorf("could not unmarshal str %v: %v", string(b), err)
   }
   subEl := element[0].([]interface{})[0]
   subSubEl := subEl.([]interface{})
   fmt.Printf("%v\n", toTranslation(subSubEl).translated)
-
+  return nil
 }
 
 type translation struct {
