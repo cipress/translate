@@ -4,7 +4,7 @@
 
 Using translate is easy. This command will install the translate executable
 
-    go get -u github.com/hankmartinez/translate
+    go get -u github.com/hankmartinez/translate/translate
 
 # Example from help
 
