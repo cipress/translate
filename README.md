@@ -2,7 +2,7 @@
 
 Using translate is easy. This command will install the translate executable
 
-    go get -u github.com/cipress/translate
+    go get -u github.com/hankmartinez/translate
 
 # Example from help
 
