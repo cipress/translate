@@ -4,11 +4,11 @@ import (
   "github.com/spf13/cobra"
   "fmt"
   "net/http"
-  "log"
   "io/ioutil"
   "net/url"
   "strconv"
   "encoding/json"
+  "os"
 )
 
 const translateApi = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=%v&tl=%v&dt=t&q=%v"
@@ -29,14 +29,16 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
   if err := rootCmd.Execute(); err != nil {
-    log.Fatal(err)
+    fmt.Print(err)
+    os.Exit(1)
   }
 }
 
 func translate(_ *cobra.Command, args []string) {
 
   if len(args) == 0 {
-    log.Fatalf("please provide a translate argument")
+    fmt.Printf("please provide at least 1 arg to translate")
+    os.Exit(1)
   }
   var escapedQuery string
   var queryLen = 0
@@ -50,21 +52,25 @@ func translate(_ *cobra.Command, args []string) {
   req.Header.Set("Content-Length", strconv.Itoa(queryLen))
   r, err := http.DefaultClient.Do(req)
   if err != nil {
-    log.Fatalf("could not translate text: %v", err)
+    fmt.Printf("could not translate text: %v", err)
+    os.Exit(1)
   }
 
   if r.StatusCode != 200 {
-    log.Fatalf("could read request response code: %v", r.StatusCode)
+    fmt.Printf("could read request response code: %v", r.StatusCode)
+    os.Exit(1)
   }
 
   defer r.Body.Close()
   b, err := ioutil.ReadAll(r.Body)
   if err != nil {
-    log.Fatalf("could not read response file: %v", err)
+    fmt.Printf("could not read response file: %v", err)
+    os.Exit(1)
   }
   var element []interface{}
   if err := json.Unmarshal(b, &element); err != nil {
-    log.Fatalf("could not unmarshal str %v: %v", string(b), err)
+    fmt.Printf("could not unmarshal str %v: %v", string(b), err)
+    os.Exit(1)
   }
   subEl := element[0].([]interface{})[0]
   subSubEl := subEl.([]interface{})
@@ -80,7 +86,7 @@ type translation struct {
 
 func toTranslation(element []interface{}) *translation {
   return &translation{
-    translated:element[0].(string),
-    source:element[1].(string),
-    code:element[4].(float64)}
+    translated: element[0].(string),
+    source:     element[1].(string),
+    code:       element[4].(float64)}
 }
