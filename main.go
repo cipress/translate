@@ -1,6 +1,6 @@
 package main
 
-import "translate/cmd"
+import "github.com/cipress/translate/cmd"
 
 func main() {
   cmd.Execute()
