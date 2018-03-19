@@ -1,5 +1,5 @@
 [![CircleCI status](https://circleci.com/gh/hankmartinez/translate.png?circle-token=:circle-token "CircleCI status")](https://circleci.com/gh/hankmartinez/translate)
-
+[![Go Report Card](https://goreportcard.com/badge/github.com/hankmartinez/translate)](https://goreportcard.com/report/github.com/hankmartinez/translate)
 # Installation
 
 Using translate is easy. This command will install the translate executable
