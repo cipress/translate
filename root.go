@@ -11,8 +11,8 @@ var (
 )
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&sl, "sl", "en", "source language")
-	rootCmd.PersistentFlags().StringVar(&tl, "tl", "it", "target language")
+	rootCmd.PersistentFlags().StringVar(&sl, "sl", "en", "source language (os env property $TRANSLATE_SL has priority)")
+	rootCmd.PersistentFlags().StringVar(&tl, "tl", "it", "target language (os env property $TRANSLATE_TL has priority)")
 }
 
 var rootCmd = &cobra.Command{
@@ -30,6 +30,14 @@ func transl(_ *cobra.Command, args []string) error {
 		escaped := q + " "
 		query += escaped
 	}
+	slProp := os.Getenv("TRANSLATE_SL")
+	if slProp != "" {
+	  sl = slProp
+  }
+  tlProp := os.Getenv("TRANSLATE_TL")
+  if tlProp != "" {
+    tl = tlProp
+  }
 	res, err := Translate(sl, tl, query)
 	if err != nil {
 		return fmt.Errorf("could not translate [%v]: %v", query, err)
