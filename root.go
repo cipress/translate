@@ -1,10 +1,8 @@
-package cmd
+package translate
 
 import (
 	"fmt"
-	"github.com/hankmartinez/translate"
 	"github.com/spf13/cobra"
-	"net/url"
 	"os"
 )
 
@@ -27,23 +25,23 @@ func transl(_ *cobra.Command, args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("please provide at least 1 arg to translate\n")
 	}
-	var escapedQuery string
+	var query string
 	for _, q := range args {
-		escaped := url.PathEscape(q + " ")
-		escapedQuery += escaped
+		escaped := q + " "
+		query += escaped
 	}
-	res, err := translate.Translate(sl, tl, escapedQuery)
+	res, err := Translate(sl, tl, query)
 	if err != nil {
-		return fmt.Errorf("could not translate [%v]: %v", escapedQuery, err)
+		return fmt.Errorf("could not translate [%v]: %v", query, err)
 	}
-	fmt.Printf("%v\n", res)
+	fmt.Fprintln(os.Stdout, res)
 	return nil
 }
 
 //Execute translate command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Print(err)
+		fmt.Fprintf(os.Stderr, "could not execute command: %v", err)
 		os.Exit(1)
 	}
 }

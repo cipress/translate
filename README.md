@@ -22,3 +22,15 @@ Multiple args are joined in a single phrase to translate
           
     translate Hello My Friend -> Ciao amico    
     translate --tl ru Hello My Friend -> Привет мой друг
+
+# System 'Notify' (linux)
+In conjunction with [xsel](https://github.com/kfish/xsel) you can set up a simple shell script
+called by keyboard shortcut
+    
+    #!/bin/bash
+    SELECTION=$(xsel -o)
+    notify-send --icon=info "Translate: $SELECTION" "$(translate $SELECTION)"
+    
+The result:
+
+![sample](xsel-sample.png)

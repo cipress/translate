@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 const translateApi = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=%v&tl=%v&dt=t&q=%v"
@@ -26,10 +27,12 @@ func toTranslation(element []interface{}) *translation {
 
 //Translate translates a source language 'sl' to target language 'tl' given a query 'q'
 func Translate(sl, tl, q string) (string, error) {
-	u := fmt.Sprintf(translateApi, sl, tl, url.PathEscape(q))
+	q = strings.TrimSpace(q)
+	query := strings.Replace(url.QueryEscape(q), ".", "%2E", -1)
 
+	u := fmt.Sprintf(translateApi, sl, tl, query)
 	req, _ := http.NewRequest("POST", u, nil)
-	req.Header.Set("Content-Length", strconv.Itoa(len(q)))
+	req.Header.Set("Content-Length", strconv.Itoa(len(query)))
 	r, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("could not translate text: %v", err)
@@ -48,7 +51,12 @@ func Translate(sl, tl, q string) (string, error) {
 	if err := json.Unmarshal(b, &element); err != nil {
 		return "", fmt.Errorf("could not unmarshal str %v: %v", string(b), err)
 	}
-	subEl := element[0].([]interface{})[0]
-	subSubEl := subEl.([]interface{})
-	return toTranslation(subSubEl).translated, nil
+	subEl := element[0].([]interface{})
+	var translated string
+	for _, t := range subEl {
+		subSubEl := t.([]interface{})
+		translated += toTranslation(subSubEl).translated
+	}
+
+	return translated, nil
 }
