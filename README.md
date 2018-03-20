@@ -17,8 +17,8 @@ Multiple args are joined in a single phrase to translate
     
     Flags:
       -h, --help        help for this command
-          --sl string   source language (default "en")
-          --tl string   target language (default "it")  
+          --sl string   source language (os env property $TRANSLATE_SL has priority) (default "en")
+          --tl string   target language (os env property $TRANSLATE_TL has priority) (default "it")  
           
     translate Hello My Friend -> Ciao amico    
     translate --tl ru Hello My Friend -> Привет мой друг
