@@ -17,7 +17,7 @@ var (
 func init() {
 	rootCmd.PersistentFlags().StringVar(&sl, "sl", "en", "source language (os env property $TRANSLATE_SL has priority)")
 	rootCmd.PersistentFlags().StringVar(&tl, "tl", "it", "target language (os env property $TRANSLATE_TL has priority)")
-	rootCmd.PersistentFlags().BoolVar(&insecure, "insecure", false, "ignore certificate errors")
+	rootCmd.PersistentFlags().BoolVar(&insecure, "insecure", false, "ignore certificate errors (os env property $TRANSLATE_INSECURE has priority, if present whatever the value is, 'insecure' is true)")
 }
 
 var rootCmd = &cobra.Command{
@@ -43,12 +43,13 @@ func transl(_ *cobra.Command, args []string) error {
 	if tlProp != "" {
 		tl = tlProp
 	}
-	if insecure {
-		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{
-			InsecureSkipVerify: true,
-		}
+	_, insecureProp := os.LookupEnv("TRANSLATE_INSECURE")
+	if insecureProp {
+		insecure = true
 	}
-	res, err := Translate(sl, tl, query)
+
+	client := &http.Client{Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: insecure}}}
+	res, err := Translate(sl, tl, query, client)
 	if err != nil {
 		return fmt.Errorf("could not translate [%v]: %v", query, err)
 	}

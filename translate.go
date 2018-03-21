@@ -26,14 +26,20 @@ func toTranslation(element []interface{}) *translation {
 }
 
 //Translate translates a source language 'sl' to target language 'tl' given a query 'q'
-func Translate(sl, tl, q string) (string, error) {
+//If httpClient is nil http.DefaultClient will be used for requests
+func Translate(sl, tl, q string, httpClient *http.Client) (string, error) {
+	client := http.DefaultClient
+	if httpClient != nil {
+		client = httpClient
+	}
+
 	q = strings.TrimSpace(q)
 	query := strings.Replace(url.QueryEscape(q), ".", "%2E", -1)
 
 	u := fmt.Sprintf(translateApi, sl, tl, query)
 	req, _ := http.NewRequest("POST", u, nil)
 	req.Header.Set("Content-Length", strconv.Itoa(len(query)))
-	r, err := http.DefaultClient.Do(req)
+	r, err := client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("could not translate text: %v", err)
 	}

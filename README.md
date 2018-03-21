@@ -17,8 +17,10 @@ Multiple args are joined in a single phrase to translate
     
     Flags:
       -h, --help        help for this command
+          --insecure    ignore certificate errors (os env property $TRANSLATE_INSECURE has priority, if present whatever the value is, 'insecure' is assigned to true)
           --sl string   source language (os env property $TRANSLATE_SL has priority) (default "en")
-          --tl string   target language (os env property $TRANSLATE_TL has priority) (default "it")  
+          --tl string   target language (os env property $TRANSLATE_TL has priority) (default "it")
+  
           
     translate Hello My Friend -> Ciao amico    
     translate --tl ru Hello My Friend -> Привет мой друг
