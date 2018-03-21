@@ -1,18 +1,23 @@
 package translate
 
 import (
+	"crypto/tls"
 	"fmt"
-	"github.com/spf13/cobra"
+	"net/http"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
 var (
-	sl, tl string
+	sl, tl   string
+	insecure bool
 )
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&sl, "sl", "en", "source language (os env property $TRANSLATE_SL has priority)")
 	rootCmd.PersistentFlags().StringVar(&tl, "tl", "it", "target language (os env property $TRANSLATE_TL has priority)")
+	rootCmd.PersistentFlags().BoolVar(&insecure, "insecure", false, "ignore certificate errors")
 }
 
 var rootCmd = &cobra.Command{
@@ -32,12 +37,17 @@ func transl(_ *cobra.Command, args []string) error {
 	}
 	slProp := os.Getenv("TRANSLATE_SL")
 	if slProp != "" {
-	  sl = slProp
-  }
-  tlProp := os.Getenv("TRANSLATE_TL")
-  if tlProp != "" {
-    tl = tlProp
-  }
+		sl = slProp
+	}
+	tlProp := os.Getenv("TRANSLATE_TL")
+	if tlProp != "" {
+		tl = tlProp
+	}
+	if insecure {
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{
+			InsecureSkipVerify: true,
+		}
+	}
 	res, err := Translate(sl, tl, query)
 	if err != nil {
 		return fmt.Errorf("could not translate [%v]: %v", query, err)
